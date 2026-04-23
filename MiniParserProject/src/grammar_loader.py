@@ -15,7 +15,7 @@ def load_grammar(file_path):
             for alt in alternatives:
                 tokens = alt.strip().split()
                 parsed_alternatives.append(tokens)
-            parsed_alternatives.sort(key=len, reverse=True)
+            parsed_alternatives.sort(key=len, reverse=True) #kısa olan alternatifler önce gelmesin diye sıralama  yoksa hata
             grammar[lhs] = parsed_alternatives
             
     return grammar
