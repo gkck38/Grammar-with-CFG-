@@ -13,7 +13,7 @@ def load_grammar(file_path):
             parsed_alternatives = []
             
             for alt in alternatives:
-                tokens = alt.strip().split()
+                tokens = alt.strip().split() #kelimeleri ayırmak için split kullanıyoruz
                 parsed_alternatives.append(tokens)
             parsed_alternatives.sort(key=len, reverse=True) #kısa olan alternatifler önce gelmesin diye sıralama  yoksa hata
             grammar[lhs] = parsed_alternatives

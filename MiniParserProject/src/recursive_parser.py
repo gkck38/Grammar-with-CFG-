@@ -1,69 +1,86 @@
-from grammar_loader import load_grammar
-import json
+def parse_sentence(cumle, grammar):
+    tokens = cumle.split()
+    guncel_endeks = 0
 
+    # --- HATA TAKİP AJANI DEĞİŞKENLERİ ---
+    en_uzak_endeks = 0
+    beklenen_kurallar = set()
 
-grammar = load_grammar(r"MiniParserProject\data\grammar1.txt")  #bu kısım main.py'de olucak deneme için buraya bıraktım
-
-cumle = "the man saw a dog"
-tokens = cumle.split()
-guncel_endeks = 0
-
-def parse(kural_adi):
-    global guncel_endeks 
-    
-    # --- GÖREV 1: KELİME (TERMINAL) KONTROLÜ ---
-    if kural_adi not in grammar:
+    def parse(kural_adi):
+        nonlocal guncel_endeks, en_uzak_endeks, beklenen_kurallar 
         
-        # 1. İstisna: Epsilon (ε)
-        if kural_adi == "ε":
-            return {"ε": "ε"}
+        # --- GÖREV 1: KELİME (TERMINAL) KONTROLÜ ---
+        if kural_adi not in grammar:
+            
+            if kural_adi == "ε":
+                return {"ε": "ε"}
 
-        # 2. Sınır: Cümle bitti mi?
-        elif guncel_endeks >= len(tokens):
-            return False
+            # Cümle Bitti Kontrolü
+            elif guncel_endeks >= len(tokens):
+                # AJAN DEVREDE: Eğer bu en uzak noktaysa, aranan kuralı not et
+                if guncel_endeks > en_uzak_endeks:
+                    en_uzak_endeks = guncel_endeks
+                    beklenen_kurallar = {kural_adi}
+                elif guncel_endeks == en_uzak_endeks:
+                    beklenen_kurallar.add(kural_adi)
+                return False
 
-        # 3. Eşleşme: Kelime tutuyor mu?
-        elif tokens[guncel_endeks] == kural_adi:
-            eslesen_kelime = tokens[guncel_endeks]
-            guncel_endeks += 1
-            # Sözlük yerine direkt kelimenin kendisini dönüyoruz yoksa hata aldım
-            return eslesen_kelime 
+            # Başarılı Eşleşme
+            elif tokens[guncel_endeks] == kural_adi:
+                eslesen_kelime = tokens[guncel_endeks]
+                guncel_endeks += 1
+                return eslesen_kelime 
 
-        # 4. Eşleşmeme
-        else:
-            return False
-
-    # --- GÖREV 2: KURAL KONTROLÜ (BACKTRACKING) ---
-    for alternatif in grammar[kural_adi]:
-        temp_endeks = guncel_endeks
-        parse_sonucu = {}
-
-        for alt_kural in alternatif:
-            sonuc = parse(alt_kural)
-
-            if sonuc is False:
-                break
-
-            # Hatamın düzeltmesi : Gelen şey sözlük mü, düz kelime mi?
-            if isinstance(sonuc, dict):
-                parse_sonucu.update(sonuc)
+            # Hatalı Kelime
             else:
-                parse_sonucu = sonuc
+                # AJAN DEVREDE: Hata alınan yer en uzak noktaysa, beklenen kelimeyi kaydet
+                if guncel_endeks > en_uzak_endeks:
+                    en_uzak_endeks = guncel_endeks
+                    beklenen_kurallar = {kural_adi}
+                elif guncel_endeks == en_uzak_endeks:
+                    beklenen_kurallar.add(kural_adi)
+                return False
 
-        # break çalışmadıysa, yani tüm alt kurallar başarılıysa
-        else:
-            return {kural_adi: parse_sonucu}
+        # --- GÖREV 2: KURAL KONTROLÜ (BACKTRACKING) ---
+        for alternatif in grammar[kural_adi]:
+            temp_endeks = guncel_endeks
+            parse_sonucu = {}
+            basarili_mi = True
 
-        # Başarısız olursa geri sar (Backtracking)
-        guncel_endeks = temp_endeks
+            for alt_kural in alternatif:
+                sonuc = parse(alt_kural)
+                if sonuc is False:
+                    basarili_mi = False
+                    break
+
+                if isinstance(sonuc, dict):
+                    parse_sonucu.update(sonuc)
+                else:
+                    parse_sonucu = sonuc
+
+            if basarili_mi:
+                return {kural_adi: parse_sonucu}
+
+            guncel_endeks = temp_endeks
+            
+        return False
+
+    # --- ANA ÇALIŞTIRMA VE ÇIKTI KONTROLÜ ---
+    baslangic_kurali = list(grammar.keys())[0]
+    agac = parse(baslangic_kurali)
+
+    # BAŞARILI DURUM: Ağaç oluştu ve cümlenin tamamı okunduysa
+    if agac and guncel_endeks == len(tokens):
+        return {"valid": True, "tree": agac}
+    
+    # BAŞARISIZ DURUM: Hata raporunu paketle ve main.py'ye gönder!
+    else:
+        hata_kelimesi = tokens[en_uzak_endeks] if en_uzak_endeks < len(tokens) else "EOF (Cümle Sonu)"
+        beklenenler = " or ".join(beklenen_kurallar)
         
-    return False
-
-# Test 
-sonuc_agaci = parse("<sentence>")
-
-if sonuc_agaci:
-    print("Valid")
-    print(json.dumps(sonuc_agaci, indent=4))
-else:
-    print("Invalid")
+        return {
+            "valid": False,
+            "error_index": en_uzak_endeks + 1,  # 0. indeks yerine insanlar için 1'den başlat
+            "error_token": hata_kelimesi,
+            "expected": beklenenler
+        }
