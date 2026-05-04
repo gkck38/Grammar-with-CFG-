@@ -3,8 +3,8 @@ from grammar_loader import load_grammar
 from recursive_parser import parse_sentence
 
 def main():
-    grammar_file = r"MiniParserProject\data\grammar1.txt"
-    sentences_file = r"MiniParserProject\data\sentences.txt"
+    grammar_file = r"MiniParserProject\data\grammar2.txt"
+    sentences_file = r"MiniParserProject\data\sentences2.txt"
 
     print(f"--- Gramer Yükleniyor: {grammar_file} ---")
     try:
@@ -33,7 +33,7 @@ def main():
                     print("JSON:")
                     # En dışa "sentence" sarmalayıcısı ekliyoruz
                     final_json = {"sentence": sonuc["tree"]["<sentence>"]} if "<sentence>" in sonuc["tree"] else sonuc["tree"]
-                    print(json.dumps(final_json, indent=4))
+                    print(json.dumps(final_json, indent=4, ensure_ascii=False))
                     
                 # 3. Rapor Invalid ise o 15 Puanlık hatayı bas!
                 else:

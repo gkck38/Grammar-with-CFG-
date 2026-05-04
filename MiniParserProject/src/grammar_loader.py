@@ -7,7 +7,7 @@ def load_grammar(file_path):
                 continue
                 
             lhs, rhs = line.split("::=")
-            lhs = lhs.strip()
+            lhs = lhs.strip()  
             
             alternatives = rhs.split("|")
             parsed_alternatives = []
