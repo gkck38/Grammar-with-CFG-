@@ -1,0 +1,11 @@
+<sentence> ::= <noun-phrase> <verb-phrase>
+<noun-phrase> ::= <determiner> <adjectives> <noun> | <pronoun> | <noun>
+<verb-phrase> ::= <verb> <noun-phrase> | <verb> <noun-phrase> <prep-phrase> | <verb>
+<prep-phrase> ::= <preposition> <noun-phrase>
+<adjectives> ::= <adjective> <adjectives> | <adjective> | ε
+<determiner> ::= the | a | an | some | every
+<pronoun> ::= he | she | it | they | we | I | you
+<noun> ::= wizard | dragon | king | knight | castle | sword | shield | goblin | mountain | river | forest | village | hero | monster
+<verb> ::= saw | attacked | defended | destroyed | crossed | climbed | found | lost | carried | followed | watched
+<adjective> ::= brave | ancient | dark | shiny | evil | tall | cold | magical | cursed | flying | giant | tiny | red | black
+<preposition> ::= in | on | under | above | behind | near | with | towards | through | over
