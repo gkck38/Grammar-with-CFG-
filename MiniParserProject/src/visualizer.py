@@ -45,7 +45,7 @@ def ciz_agaci(agac_sozlugu, dosya_adi="parse_tree"):
     # kökten başlayarak dallanmayı ateşle
     dallari_ekle(kok_id, agac_sozlugu[baslangic_kurali])
 
-    cikis_klasoru = "MiniParserProject\\trees" # src klasöründen bir üste çıkıp trees klasörüne gir
+    cikis_klasoru = "MiniParserProject/trees" # src klasöründen bir üste çıkıp trees klasörüne gir
     
     # Eğer trees adında bir klasör yoksa, Python otomatik olarak oluştursun
     os.makedirs(cikis_klasoru, exist_ok=True)
