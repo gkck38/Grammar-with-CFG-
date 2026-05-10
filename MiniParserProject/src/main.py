@@ -6,8 +6,8 @@ from visualizer import ciz_agaci
 
 def main():
     baslangic_zamani = time.time()
-    grammar_file = r"MiniParserProject\data\grammar3.txt"
-    sentences_file = r"MiniParserProject\data\sentences3.txt"
+    grammar_file = r"MiniParserProject/data/grammar3.txt"
+    sentences_file = r"MiniParserProject/data/sentences3.txt"
 
     print(f"--- Gramer Yükleniyor: {grammar_file} ---")
     try:

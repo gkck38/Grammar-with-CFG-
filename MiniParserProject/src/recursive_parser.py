@@ -9,7 +9,7 @@ def parse_sentence(cumle, grammar):
     #uzunluğu 1 olanlar karakter , fazla olanlar kelime 
     karakter_bazli_mi = all(len(t) == 1 for t in terminaller) if terminaller else False 
 
-    if cumle.strip() == "ε" or cumle.strip().lower() == "boş string":
+    if cumle.strip() == "ε" and cumle.strip() == "":
         tokens = []
     elif karakter_bazli_mi: #karakter bazlıysa ona göre tokenlara ayırıyoruz
         tokens = list(cumle.replace(" ", "")) 
@@ -19,11 +19,11 @@ def parse_sentence(cumle, grammar):
 
     guncel_endeks = 0
 
-    en_uzak_endeks = 0 #çökmeden max nereye kadar gidebildiğimizi tutacak
-    beklenen_kurallar = set() #en uzak noktada hangi kuralların beklendiğini tutacak
+    en_uzak_endeks = 0 # çökmeden max nereye kadar gidebildiğimizi tutacak
+    beklenen_kurallar = set() # en uzak noktada hangi kuralların beklendiğini tutacak
 
     def parse(kural_adi):
-        nonlocal guncel_endeks, en_uzak_endeks, beklenen_kurallar #onları fonksiyon içinde değiştirebilmek için nonlocal ile tanımlıyoruz
+        nonlocal guncel_endeks, en_uzak_endeks, beklenen_kurallar # fonksiyon içinde değiştirebilmek için nonlocal ile tanımlıyoruz
         
         # terminal veya ε kontrolü : 
         if kural_adi not in grammar:
@@ -100,7 +100,7 @@ def parse_sentence(cumle, grammar):
     
     # başarısız durumda, en uzak noktada beklenen kuralları ve hatayı içeren bir sözlük döndür
     else:
-        hata_kelimesi = tokens[en_uzak_endeks] if en_uzak_endeks < len(tokens) else "EOF (Cümle Sonu)" #eğer en uzak endeks cümlenin sonunu aşmışsa, hatayı "EOF" olarak gösteriyoruz   
+        hata_kelimesi = tokens[en_uzak_endeks] if en_uzak_endeks < len(tokens) else "EOF (Cümle Sonu)" # eğer en uzak endeks cümlenin sonunu aşmışsa, hatayı "EOF" olarak gösteriyoruz   
         beklenenler = " or ".join(beklenen_kurallar)  
         
         return {
